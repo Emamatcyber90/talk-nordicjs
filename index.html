@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Node.js: The Road to Workers</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body {
+        font-family: 'Arial';
+        color: white;
+      }
+      h1, h2, h3 {
+        font-family: 'Arial';
+        font-weight: normal;
+        line-height: 120%;
+        color: #5ca646;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-slide-content {
+        font-size: 24px;
+        line-height: 150%;
+        background-color: black;
+      }
+      a {
+        color: lightblue;
+      }
+    </style>
+  </head>
+  <body>
+<div class="helper-lines">
+  <div class="helper-line" style="top:33%;height:2px"></div>
+  <div class="helper-line" style="top:67%;height:2px"></div>
+  <div class="helper-line" style="left:33%;width:2px"></div>
+  <div class="helper-line" style="left:67%;width:2px"></div>
+</div>
+    <textarea id="source">
+
+class: center, middle
+
+# Node.js: The Road to Workers
+
+Anna Henningsen <br />
+she/her
+
+<br />
+
+Node.js TSC <br />
+Active Node.js contributor since December 2015
+
+<br />
+<img src="nearform-logo-2.png" />
+
+---
+
+class: center, middle
+
+<!-- https://github.com/nodejs/worker/issues/4#issuecomment-417869749 -->
+<img src="50-speedup.png" />
+
+💖 If you like something, tell the people who made it 💖
+
+---
+
+# Backing up a little bit…
+
+<div style="float:right">
+  <div>
+    <img src="Pebble_stack.jpg" style="height:400px" />
+  </div>
+  <!-- https://commons.wikimedia.org/wiki/File:Pebble_stack.jpg -->
+  <span style="color:grey;font-size:50%">Image: © CC-BY 3.0 Zzubnik on Wikimedia Commons</span>
+</div>
+
+## How is Node.js structured?
+
+- One Node.js application is …
+
+  - One Process
+  - One Thread*
+  - One Event Loop
+  - One JS Engine instance
+  - One Node.js instance
+
+--
+
+- None of this has to be that way!
+
+---
+
+# What’s the problem
+
+<div style="float:right">
+  <div>
+    <img src="Queue-to-the-Louvre-cropped.jpg" style="height:300px" />
+  </div>
+  <!-- https://commons.wikimedia.org/wiki/File:Queue-to-the-Louvre.jpg -->
+  <span style="color:grey;font-size:50%">Image: © CC-BY-SA 3.0 Edal on Wikimedia Commons</span>
+</div>
+
+- Typical Node.js application: *One* piece of code runs at a time
+  - This makes life easy
+- Hogging the CPU keeps I/O from happening
+- CPU-heavy applications may have increased latency
+
+
+- The golden rule of Node.js: <br/>**Don’t block the event loop**
+
+---
+
+# Existing solutions
+
+- Multiple processes
+- `cluster` API
+
+Drawbacks:
+
+- No shared memory
+- Communication over JSON
+
+Advantages:
+
+- More isolation, stability
+- Identical APIs
+
+---
+
+# The solution: Worker threads
+
+- One Node.js application is …
+
+  - One Process
+  - **<span style="color: #aaaaff">Multiple</span> threads**
+  - One event loop per thread
+  - One JS engine instance per thread
+  - One Node.js instance per thread
+
+---
+
+# The implementation idea: Embed Node.js into itself
+
+<div style="float:left">
+  <div>
+    <img src="Klein_bottle.svg" style="height:300px" />
+  </div>
+  <!-- https://en.wikipedia.org/wiki/File:Klein_bottle.svg -->
+  <span style="color:grey;font-size:50%">Image: © CC-BY-SA 3.0 Tttrung on Wikimedia Commons</span>
+</div>
+
+- Embedding is supported – in theory
+- In practice: Eep.
+  - Lots of global state
+  - Clean up resources on exit
+  - Windows support blocked workers for 3 months
+
+---
+
+# Previous attempts:
+
+<div style="float:right">
+  <div>
+    <!-- https://github.com/nodejs/node/pull/1159 -->
+    <img src="petka.png" style="height:250px" />
+  </div>
+</div>
+
+- 2 PRs by Petka Antonov
+- Mostly just stalled out due to lack of reviewers
+
+- Lightweight implementation à la WebWorkers by Audrey Tang (唐鳳)
+  (https://github.com/audreyt/node-webworker-threads/)
+
+---
+
+# A New Hope
+
+<div style="float:right">
+  <div>
+    <!-- https://github.com/ayojs/ayo -->
+    <img src="ayo.png" style="height:250px" />
+  </div>
+</div>
+
+- Around October 2017: Ayo.js, a fork of Node.js
+- Prime development ground for Worker support
+- Worked out a full threading implementation for Node.js
+
+---
+
+# Porting to Node.js
+
+<!-- https://github.com/nodejs/node/pull/20876 -->
+<img src="20876-head.png" style="width: 90%" />
+<img src="20876-middle.png" style="width: 90%" />
+<img src="20876-merged.png" style="width: 90%" />
+
+---
+
+# Porting to Node.js
+
+<div style="float:right">
+  <div>
+    <img src="Hurdles_Bislett_Games_2008.jpg" style="height:270px" />
+  </div>
+  <!-- https://www.flickr.com/photos/12495154@N03/2832113715/ -->
+  <span style="color:grey;font-size:50%">Image: © CC-BY 2.0 Ragnar Singsaas</span>
+</div>
+
+- Major issues:
+  - Windows support
+  - npm package name `worker` unavailable
+  - New module: Scoped name à la `@nodejs/workers`?
+- Surprisingly, less issues with review for the main PR
+- Available in Node 10! 🎉
+
+---
+
+# The result
+
+- Not quite the Web `Worker` API
+- `require()` works
+- `workerData` to pass startup data
+- Almost all Node.js core APIs work
+- Transferring `ArrayBuffer`s works
+- `SharedArrayBuffer`s and `Atomics` work
+- `MessagePort`, `MessageChannel` close to the browser
+- Take care when using add-ons
+
+---
+
+# Example
+
+```js
+const { Worker } = require('worker_threads');
+
+const worker = new Worker(`
+const { parentPort } = require('worker_threads');
+parentPort.once('message',
+    message => parentPort.postMessage({ pong: message }));   // 2
+`, { eval: true });
+worker.on('message', message => console.log(message));       // 3
+worker.postMessage('ping');                                  // 1
+```
+
+```sh
+$ node --experimental-worker test.js
+{ pong: 'ping' }
+```
+
+---
+
+# Example
+
+```js
+const data = new Int32Array(new SharedArrayBuffer(32));
+data[0] = 2016;
+const worker = new Worker(`
+const data = require('worker_threads').workerData;
+for (let i = 2; data[0] != 1; ++i)  // Do the prime dance
+  while (data[0] % i === 0)
+    data[0] /= i, data[i]++;
+data[1] = 1;  // Change data[1] and notify the main thread on it
+Atomics.notify(data, 1);
+`, { eval: true, workerData: data });
+Atomics.wait(data, 1, 0);  // Wait for the notify() call above
+console.log(data);
+```
+
+---
+
+# Status
+
+- <span style="background-color: #ffaaaa; color: black; padding: 5px">Experimental</span>
+- We’re looking for feedback!
+- Maybe: Passing native handles around (e.g. sockets)
+- Deadlock detection
+- Naming Workers?
+- More isolation?
+- `.terminate()` is kind of experimental-within-experimental
+
+---
+
+
+# Other approaches
+
+- Alibaba and Microsoft have been working on similar things
+  - 😲 Shared JS objects 😲
+  - Require Engine modifications
+
+--
+
+# Please don’t …
+
+- … think this makes everything magically faster
+- … use this for I/O
+- … think spawning workers is cheap (yet?)
+  - About the same as for child processes
+  - We’re working on it!
+  - Generally: Use worker pools
+
+---
+
+# My current work
+
+<div style="float:right;margin-left:20px">
+<img src="ci.png" style="height:400px">
+</div>
+
+- Spent most of today catching up with PRs &amp; Issues
+- Trying to get green CI runs 😩
+- Submitted PRs to fix flaky/slow tests
+- Fixed a bug (that I caused) in our streaming UTF-16 decoder
+- Just refactored Node.js to have a proper options parser
+  - Make `--help` output a bit more flexible in layout
+  - Cleaning up more global state…
+  - Maybe add CLI flags to Workers?
+
+---
+
+# Finally: Heads up!
+
+<div style="float:right">
+<!-- https://github.com/nodejs/Release -->
+<img src="schedule.png" style="height: 350px" />
+</div>
+
+- Node 6 is supported until **April 2019**
+- Node 8 is supported until **December 2019**
+- Node 10 will become LTS in **October** ← Workers in production? 🤩
+- Node 11 will be released in **October**
+
+---
+
+# Thank you!
+
+<div style="float:left;margin-right:100px">
+<img src="blue.jpg" style="height: 350px" />
+</div>
+
+If you have any questions, look for freshly dyed blue hair.
+
+Also:
+- https://twitter.com/addaleax/
+- anna@addaleax.net
+- https://github.com/nodejs/help/
+
+    </textarea>
+
+    <script src="remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create({ratio: '16:9'});
+    </script>
+  </body>
+</html>
