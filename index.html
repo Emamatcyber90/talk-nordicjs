@@ -58,7 +58,7 @@ Active Node.js contributor since December 2015
 
 name: how-did-i
 
-# How did I get into Node core?
+# How did I get into Node.js core?
 
 ```js
 setTimeout(1000, 1000, function() { console.log('hi!'); });
@@ -155,8 +155,8 @@ class: center, middle
 - CPU-heavy applications may have increased latency
 
 
-- The golden rule of Node.js: <br/>
-**<span style="color:gold">Don’t block the event loop</span>**
+- The golden rule of Node.js performance: <br/>
+**<span style="color:gold;padding:10px">Don’t block the event loop</span>**
 
 ---
 
@@ -179,6 +179,8 @@ Advantages:
 
 # The solution: Worker threads
 
+<div id="workers-design-target"></div>
+
 - One Node.js application is …
 
   - One Process
@@ -189,7 +191,7 @@ Advantages:
 
 ---
 
-# The implementation idea: Embed Node.js into itself
+# Implementation idea: <br /> Embed Node.js into itself
 
 <div style="float:left">
   <div>
@@ -200,7 +202,7 @@ Advantages:
 </div>
 
 - Embedding is supported – in theory
-- In practice: *Eep*.
+- In practice, before Node 10: *Eep*.
   - Lots of global state
   - Clean up resources on exit
   - CLI options are global
@@ -282,7 +284,7 @@ Advantages:
 }
 </style>
 
-<div style="float:right">
+<div style="float:right" id="workers-design">
 <table style="border-spacing: 5px">
 <tr class="ngroup">
 <td class="nitem" colspan="2">Your code</td>
@@ -312,10 +314,15 @@ Advantages:
 
 - Not quite the Web `Worker` API
 - `require()` works
-- `workerData` to pass startup data
 - Almost all Node.js core APIs work
+
+--
+
+## Communication
+
 - Transferring `ArrayBuffer`s works
 - `SharedArrayBuffer`s and `Atomics` work
+- `workerData` to pass startup data
 - `MessagePort`, `MessageChannel` close to the browser
 - Take care when using add-ons
 
@@ -367,11 +374,16 @@ console.log(data);
 - We’re looking for feedback!
 - Do you have: Real world usage? Cool experimentation?
 - Web Locks API
-- Maybe: Passing native handles around (e.g. sockets)
-- Deadlock detection
-- Naming Workers?
-- More isolation?
+- Dev tools support!
 - `.terminate()` is kind of experimental-within-experimental
+
+--
+
+## Hopefully?
+
+- Passing native handles around (e.g. sockets)
+- Deadlock detection
+- More isolation?
 
 ---
 
@@ -395,13 +407,15 @@ console.log(data);
 
 ---
 
-# My current work
+# What I typically do
 
 <div style="float:right;margin-left:20px">
 <img src="ci.png" style="height:400px">
 </div>
 
-- Spent most of today catching up with PRs &amp; Issues
+This week…
+
+- Catching up with PRs &amp; Issues
 - Trying to get green CI runs 😩
 - Submitted PRs to fix flaky/slow tests
 - Fixed a bug (that I caused) in our streaming UTF-16 decoder
@@ -423,6 +437,10 @@ console.log(data);
 - Node 8 is supported until **December 2019**
 - Node 10 will become LTS in **October** (Workers! 🤩)
 - Node 11 will be released in **October**
+
+<div style="clear:both">
+More @ <a href="https://github.com/nodejs/Release">https://github.com/nodejs/Release</a>
+</div>
 
 ---
 
@@ -448,6 +466,8 @@ Slides @ https://addaleax.net/workers-nordicjs/
     </script>
     <script>
       var slideshow = remark.create({ratio: '16:9'});
+  document.getElementById('workers-design-target').appendChild(
+  document.getElementById('workers-design').cloneNode(true))
     </script>
   </body>
 </html>
