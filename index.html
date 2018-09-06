@@ -43,7 +43,8 @@ class: center, middle
 # Node.js: The Road to Workers
 
 Anna Henningsen <br />
-she/her
+she/her <br />
+@addaleax
 
 <br />
 
@@ -52,6 +53,54 @@ Active Node.js contributor since December 2015
 
 <br />
 <img src="nearform-logo-2.png" />
+
+---
+
+name: how-did-i
+
+# How did I get into Node core?
+
+```js
+setTimeout(1000, 1000, function() { console.log('hi!'); });
+```
+
+---
+template: how-did-i
+
+(don’t ask me why)
+
+```
+> TypeError: callback.call is not a function
+    at ontimeout [as _onTimeout] (timers.js:195:34)
+    at Timer.listOnTimeout (timers.js:92:15)
+```
+
+---
+template: how-did-i
+
+```diff
+@@ -177,6 +177,10 @@ exports.enroll = function(item, msecs) {
+
+
+ exports.setTimeout = function(callback, after) {
++  if (typeof callback !== 'function') {
++    throw new TypeError('"callback" argument must be a function');
++  }
++
+   after *= 1; // coalesce to number or NaN
+
+   if (!(after >= 1 && after &lt;= TIMEOUT_MAX)) {
+```
+
+---
+
+# Why am I talking about this?
+
+- I didn’t know much about what was happening inside Node.js
+- A lot of people in the community don’t
+
+--
+- There’s a hidden world here
 
 ---
 
@@ -219,6 +268,47 @@ Advantages:
 
 # The result
 
+<style>
+.nitem {
+  color: white;
+  border: 2px solid white;
+  border-radius: 5px;
+  padding: 4px;
+  margin: 4px;
+  width: 25%;
+  text-align: center;
+  white-space: nowrap;
+}
+</style>
+
+<div style="float:right">
+<table style="border-spacing: 5px">
+<tr class="ngroup">
+<td class="nitem" colspan="2">Your code</td>
+<td class="nitem" colspan="2">Your code</td>
+<td class="nitem" colspan="2">Your code</td>
+</tr>
+<tr class="ngroup">
+<td class="nitem" colspan="2">Node.js</td>
+<td class="nitem" colspan="2">Node.js</td>
+<td class="nitem" colspan="2">Node.js</td>
+</tr>
+<tr class="ngroup">
+<td class="nitem">V8</td><td class="nitem">libuv</td>
+<td class="nitem">V8</td><td class="nitem">libuv</td>
+<td class="nitem">V8</td><td class="nitem">libuv</td>
+</tr>
+<tr class="ngroup">
+<td class="nitem" colspan="2">Thread</td>
+<td class="nitem" colspan="2">Thread</td>
+<td class="nitem" colspan="2">Thread</td>
+</tr>
+<tr class="ngroup">
+<td class="nitem" colspan="6">Process</td>
+</tr>
+</table>
+</div>
+
 - Not quite the Web `Worker` API
 - `require()` works
 - `workerData` to pass startup data
@@ -274,6 +364,9 @@ console.log(data);
 
 - <span style="background-color: #ffaaaa; color: black; padding: 5px">Experimental</span>
 - We’re looking for feedback!
+- Do you have: Real world usage? Cool experimentation?
+
+- Web Locks API
 - Maybe: Passing native handles around (e.g. sockets)
 - Deadlock detection
 - Naming Workers?
@@ -294,7 +387,7 @@ console.log(data);
 # Please don’t …
 
 - … think this makes everything magically faster
-- … use this for I/O
+- … use this for parallelizing I/O
 - … think spawning workers is cheap (yet?)
   - About the same as for child processes
   - We’re working on it!
@@ -312,7 +405,7 @@ console.log(data);
 - Trying to get green CI runs 😩
 - Submitted PRs to fix flaky/slow tests
 - Fixed a bug (that I caused) in our streaming UTF-16 decoder
-- Just refactored Node.js to have a proper options parser
+- Refactored Node.js to have a proper options parser
   - Make `--help` output a bit more flexible in layout
   - Cleaning up more global state…
   - Maybe add CLI flags to Workers?
@@ -328,7 +421,7 @@ console.log(data);
 
 - Node 6 is supported until **April 2019**
 - Node 8 is supported until **December 2019**
-- Node 10 will become LTS in **October** ← Workers in production? 🤩
+- Node 10 will become LTS in **October** (Workers! 🤩)
 - Node 11 will be released in **October**
 
 ---
