@@ -200,14 +200,14 @@ Advantages:
 </div>
 
 - Embedding is supported – in theory
-- In practice: Eep.
+- In practice: *Eep*.
   - Lots of global state
   - Clean up resources on exit
-  - Windows support blocked workers for 2+ months
+  - CLI options are global
 
 ---
 
-# Previous attempts:
+# Prior art
 
 <div style="float:right">
   <div>
@@ -259,7 +259,7 @@ Advantages:
 </div>
 
 - Major issues:
-  - Windows support
+  - Windows support blocked workers for 2+ months
   - npm package name `worker` unavailable
   - New module: Scoped name à la `@nodejs/workers`?
 - Surprisingly, less issues with review for the main PR
@@ -432,7 +432,8 @@ console.log(data);
 <img src="blue.jpg" style="height: 350px" />
 </div>
 
-If you have any questions, look for freshly dyed blue hair.
+If you have any questions: <br />
+Q&amp;A room, or look for freshly dyed blue hair!
 
 Also:
 - https://twitter.com/addaleax/
