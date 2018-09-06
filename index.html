@@ -97,7 +97,7 @@ template: how-did-i
 # Why am I talking about this?
 
 - I didn’t know much about what was happening inside Node.js
-- A lot of people in the community don’t
+- A lot of people in the ~~community~~ ecosystem don’t
 
 --
 - There’s a hidden world here
@@ -155,7 +155,8 @@ class: center, middle
 - CPU-heavy applications may have increased latency
 
 
-- The golden rule of Node.js: <br/>**Don’t block the event loop**
+- The golden rule of Node.js: <br/>
+**<span style="color:gold">Don’t block the event loop</span>**
 
 ---
 
@@ -202,7 +203,7 @@ Advantages:
 - In practice: Eep.
   - Lots of global state
   - Clean up resources on exit
-  - Windows support blocked workers for 3 months
+  - Windows support blocked workers for 2+ months
 
 ---
 
@@ -365,7 +366,6 @@ console.log(data);
 - <span style="background-color: #ffaaaa; color: black; padding: 5px">Experimental</span>
 - We’re looking for feedback!
 - Do you have: Real world usage? Cool experimentation?
-
 - Web Locks API
 - Maybe: Passing native handles around (e.g. sockets)
 - Deadlock detection
@@ -378,7 +378,7 @@ console.log(data);
 
 # Other approaches
 
-- Alibaba and Microsoft have been working on similar things
+- Alibaba and Microsoft (Napa.js) have been working on similar things
   - 😲 Shared JS objects 😲
   - Require Engine modifications
 
@@ -438,6 +438,8 @@ Also:
 - https://twitter.com/addaleax/
 - anna@addaleax.net
 - https://github.com/nodejs/help/
+
+Slides @ https://addaleax.net/workers-nordicjs/
 
     </textarea>
 
