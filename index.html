@@ -97,9 +97,7 @@ template: how-did-i
 # Why am I talking about this?
 
 - I didn’t know much about what was happening inside Node.js
-- A lot of people in the ~~community~~ ecosystem don’t
-
---
+- A lot of people in the community don’t
 - There’s a hidden world here
 
 ---
@@ -167,13 +165,13 @@ class: center, middle
 
 Drawbacks:
 
-- No shared memory
-- Communication over JSON
+- 👎 No shared memory
+- 👎 Communication over JSON
 
 Advantages:
 
-- More isolation, stability
-- Identical APIs
+- 👍 More isolation, stability
+- 👍 Identical APIs
 
 ---
 
@@ -204,8 +202,8 @@ Advantages:
 - Embedding is supported – in theory
 - In practice, before Node 10: *Eep*.
   - Lots of global state
-  - Clean up resources on exit
-  - CLI options are global
+  - No resource clean-up on exit
+  - CLI options were global
 
 ---
 
@@ -226,7 +224,7 @@ Advantages:
 
 ---
 
-# A New Hope
+# A New Attempt
 
 <div style="float:right">
   <div>
@@ -320,11 +318,19 @@ Advantages:
 
 ## Communication
 
-- Transferring `ArrayBuffer`s works
-- `SharedArrayBuffer`s and `Atomics` work
+- 👍 Transferring `ArrayBuffer`s works
+- 👍 `SharedArrayBuffer`s and `Atomics` work
+- 👍 `MessagePort`, `MessageChannel` close to the browser
 - `workerData` to pass startup data
-- `MessagePort`, `MessageChannel` close to the browser
-- Take care when using add-ons
+
+---
+
+# API
+
+- `const { Worker, parentPort } = require('worker_threads');`
+- `new Worker(filename) || new Worker(code, { eval: true })`
+- `worker.on('message'), worker.postMessage(data)`
+- `parentPort.on('message'), parentPort.postMessage(data)`
 
 ---
 
@@ -371,10 +377,11 @@ console.log(data);
 # Status
 
 - <span style="background-color: #ffaaaa; color: black; padding: 5px">Experimental</span>
-- We’re looking for feedback!
+- We’re looking for feedback! → https://github.com/nodejs/worker/issues/6
 - Do you have: Real world usage? Cool experimentation?
-- Web Locks API
-- Dev tools support!
+- DevTools support!
+- Web Locks API?
+- Take care when using add-ons
 - `.terminate()` is kind of experimental-within-experimental
 
 --
@@ -410,37 +417,15 @@ console.log(data);
 # What I typically do
 
 <div style="float:right;margin-left:20px">
-<img src="ci.png" style="height:400px">
+<img src="c+l.png" style="height:400px">
 </div>
 
 This week…
 
 - Catching up with PRs &amp; Issues
-- Trying to get green CI runs 😩
-- Submitted PRs to fix flaky/slow tests
-- Fixed a bug (that I caused) in our streaming UTF-16 decoder
-- Refactored Node.js to have a proper options parser
-  - Make `--help` output a bit more flexible in layout
-  - Cleaning up more global state…
-  - Maybe add CLI flags to Workers?
-
----
-
-# Finally: Heads up!
-
-<div style="float:right">
-<!-- https://github.com/nodejs/Release -->
-<img src="schedule.png" style="height: 350px" />
-</div>
-
-- Node 6 is supported until **April 2019**
-- Node 8 is supported until **December 2019**
-- Node 10 will become LTS in **October** (Workers! 🤩)
-- Node 11 will be released in **October**
-
-<div style="clear:both">
-More @ <a href="https://github.com/nodejs/Release">https://github.com/nodejs/Release</a>
-</div>
+- Fixed a test on Windows
+- Refactoring some code around built-in streams
+- Code + Learn!
 
 ---
 
@@ -451,14 +436,14 @@ More @ <a href="https://github.com/nodejs/Release">https://github.com/nodejs/Rel
 </div>
 
 If you have any questions: <br />
-Q&amp;A room, or look for freshly dyed blue hair!
+Look for freshly dyed blue hair!
 
 Also:
 - https://twitter.com/addaleax/
 - anna@addaleax.net
 - https://github.com/nodejs/help/
 
-Slides @ https://addaleax.net/workers-nordicjs/
+Slides @ https://addaleax.net/workers-nceu/
 
     </textarea>
 
